@@ -8,7 +8,7 @@ import conectar
 class Ventana(object):
 	
 	def __init__(self):
-		
+		self.cursor=None
 		font2=("Comic Sans MS",18,"bold")
 		self.Windows_Main=ThemedTk(theme="arc")
 		self.Windows_Main.geometry("800x500")
@@ -24,7 +24,7 @@ class Ventana(object):
 		self.Scripts.grid(row=2,column=2,rowspan=3)
 
 		self.var=IntVar()
-		RUpdate=Radiobutton(self.Windows_Main,variable=self.var,value=1,text="Modificar")
+		RUpdate=ttk.Radiobutton(self.Windows_Main,variable=self.var,value=1,text="Modificar")
 		RUpdate.grid(row=2,column=3)
 		RDelete=ttk.Radiobutton(self.Windows_Main,variable=self.var,value=2,text="Eliminar")
 		RDelete.grid(row=3,column=3)
@@ -118,16 +118,28 @@ class Ventana(object):
 			archivo.write(user)
 			archivo.write(password)
 		self.modulo_config.destroy()
+		if self.cursor!=None:
+			self.cursor.close()
+			self.etiquetaEstado.configure(fg="white",bg="red",text="Estado: Error de Conexion a la BD")
 		
 	def consultas(self):
-
 		scripts=self.Scripts.get("1.0","end")		
 		if len(scripts)>1:
 			valor=self.var.get()
 			if valor==1:
-				print(scripts)
+				if (("UPDATE " in scripts) or ("update " in scripts)) and (" WHERE " in scripts or " where " in scripts):
+					try:
+						self.cursor.execute(scripts)
+						self.cursor.commit()
+						messagebox.showinfo("Aleta","Se ejecuto correctamente")
+					except Exception as e:
+						messagebox.showinfo("Error",f"No pudo ejecutarse {e}")
+				else:
+					messagebox.showerror("Alerta","error de sintaxis")
 			elif valor==2:
-				print(scripts)
+				messagebox.showinfo("Notificación","Opción no válida")
+			else:
+				messagebox.showinfo("Notificación","seleccione una opción")
 		else:
 			messagebox.showinfo("Aletar","Ingrese el campo Scripts")
 

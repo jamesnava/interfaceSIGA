@@ -15,3 +15,5 @@ class Conectar(object):
 	def get_cursor(self):
 		self.cursor=self.conn.cursor()
 		return self.cursor
+	def close_conection(self):
+		self.cursor.close()
