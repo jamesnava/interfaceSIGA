@@ -28,6 +28,8 @@ class Ventana(object):
 		RUpdate.grid(row=2,column=3)
 		RDelete=ttk.Radiobutton(self.Windows_Main,variable=self.var,value=2,text="Eliminar")
 		RDelete.grid(row=3,column=3)
+		RInsert=ttk.Radiobutton(self.Windows_Main,variable=self.var,value=3,text="Insertar")
+		RInsert.grid(row=4,column=3)
 		btn_Aceptar=ttk.Button(self.Windows_Main,text="Ejecutar")
 		btn_Aceptar["command"]=self.consultas
 		btn_Aceptar.grid(row=5,column=1,columnspan=2,pady=10)
@@ -132,12 +134,35 @@ class Ventana(object):
 						self.cursor.execute(scripts)
 						self.cursor.commit()
 						messagebox.showinfo("Aleta","Se ejecuto correctamente")
+						self.Scripts.delete("1.0","end")
 					except Exception as e:
 						messagebox.showinfo("Error",f"No pudo ejecutarse {e}")
 				else:
 					messagebox.showerror("Alerta","error de sintaxis")
+			elif valor==3:
+				if (("INSERT " in scripts) or ("insert " in scripts)):
+					try:
+						self.cursor.execute(scripts)
+						self.cursor.commit()
+						messagebox.showinfo("Aleta","Se ejecuto correctamente")
+						self.Scripts.delete("1.0","end")
+					except Exception as e:
+						messagebox.showinfo("Error",f"No pudo ejecutarse {e}")
+				else:
+					messagebox.showerror("Alerta","error de sintaxis")
+
 			elif valor==2:
-				messagebox.showinfo("Notificación","Opción no válida")
+				if (("DELETE " in scripts) or ("delete " in scripts)) and ((" WHERE " in scripts) or (" where " in scripts)):
+					try:
+						self.cursor.execute(scripts)
+						self.cursor.commit()
+						messagebox.showinfo("Aleta","Se ejecuto correctamente")
+						self.Scripts.delete("1.0","end")
+					except Exception as e:
+						messagebox.showinfo("Error",f"No pudo ejecutarse {e}")
+				else:
+					messagebox.showerror("Alerta","error de sintaxis")
+
 			else:
 				messagebox.showinfo("Notificación","seleccione una opción")
 		else:
